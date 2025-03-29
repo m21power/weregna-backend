@@ -11,16 +11,18 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func ConnectDb() {
+func ConnectDb() (*sql.DB, error) {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
+		return nil, err
 	}
 
 	host := os.Getenv("HOST")
 	port, err := strconv.Atoi(os.Getenv("PORT"))
 	if err != nil {
 		log.Fatal("Error parsing port")
+		return nil, err
 	}
 	dbname := os.Getenv("DB_NAME")
 	password := os.Getenv("PASSWORD")
@@ -33,7 +35,6 @@ func ConnectDb() {
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
 
 	err = db.Ping()
 	if err != nil {
@@ -41,4 +42,5 @@ func ConnectDb() {
 	}
 
 	fmt.Println("Successfully connected!")
+	return db, nil
 }
