@@ -57,6 +57,22 @@ func (r *Router) RegisterRoute() {
 	headRoutes.Handle("/head/add-my-student/{headID}", http.HandlerFunc(headHandler.AddMyStudent)).Methods("POST")
 	headRoutes.Handle("/head/get-my-students/{headID}", http.HandlerFunc(headHandler.GetMyStudents)).Methods("GET")
 
+	// Message endpoint
+	// Initialize repository, usecase, and handler
+	messageRepository := repository.NewMessageRepoImpl(db)
+	messageUsecase := usecases.NewMessageUsecases(messageRepository)
+	conversationRepository := repository.NewConversationRepoImpl(db)
+	conversationUsecase := usecases.NewConversationUsecases(conversationRepository)
+	messageHandler := handlers.NewMessageHandler(messageUsecase, conversationUsecase)
+
+	messageRoutes := r.route.PathPrefix("/api/v1").Subrouter()
+	messageRoutes.Handle("/message/create", http.HandlerFunc(messageHandler.CreateMessage)).Methods("POST")
+	messageRoutes.Handle("/message/get-by-conversation-id/{conversationID}", http.HandlerFunc(messageHandler.GetMessagesByConversationID)).Methods("GET")
+	messageRoutes.Handle("/message/get-by-id/{id:.}", http.HandlerFunc(messageHandler.GetMessageByID)).Methods("GET")
+	messageRoutes.Handle("/message/update/{id:.}", http.HandlerFunc(messageHandler.UpdateMessage)).Methods("PUT")
+	messageRoutes.Handle("/message/delete/{id:.}", http.HandlerFunc(messageHandler.DeleteMessage)).Methods("DELETE")
+	messageRoutes.Handle("/message/mark-message/{conversationID}/{userID}", http.HandlerFunc(messageHandler.MarkMessageAsRead)).Methods("POST")
+	messageRoutes.Handle("/message/get-unseen/{conversationID}/{userID}", http.HandlerFunc(messageHandler.UnreadMessagesCount)).Methods("GET")
 	log.Println("Routes registered:")
 }
 
