@@ -1,0 +1,2 @@
+ALTER TABLE head
+ADD COLUMN  telegram_username VARCHAR(255) UNIQUE;

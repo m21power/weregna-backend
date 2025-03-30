@@ -26,7 +26,7 @@ func (s *StudentRepoImpl) CreateStudent(student *domain.StudentModel) error {
 
 func (s *StudentRepoImpl) GetStudentByEmail(email string) (*domain.StudentModel, error) {
 	var student domain.StudentModel
-	err := s.db.QueryRow("SELECT * FROM student WHERE email = $1", email).Scan(&student.ID, &student.Email, &student.Password, &student.ProfilePic, &student.Name, &student.TelegramUsername, &student.HeadID, &student.TotalDuration, &student.TotalActiveDays)
+	err := s.db.QueryRow("SELECT * FROM student WHERE email = $1", email).Scan(&student.ID, &student.Email, &student.Password, &student.ProfilePic, &student.Name, &student.TelegramUsername, &student.HeadID, &student.TotalDuration, &student.TotalActiveDays, &student.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +36,7 @@ func (s *StudentRepoImpl) GetStudentByEmail(email string) (*domain.StudentModel,
 func (s *StudentRepoImpl) GetStudentByID(id int) (*domain.StudentModel, error) {
 	print(id)
 	var student domain.StudentModel
-	err := s.db.QueryRow("SELECT * FROM student WHERE id = $1", id).Scan(&student.ID, &student.Email, &student.Password, &student.ProfilePic, &student.Name, &student.TelegramUsername, &student.HeadID, &student.TotalDuration, &student.TotalActiveDays)
+	err := s.db.QueryRow("SELECT * FROM student WHERE id = $1", id).Scan(&student.ID, &student.Email, &student.Password, &student.ProfilePic, &student.Name, &student.TelegramUsername, &student.HeadID, &student.TotalDuration, &student.TotalActiveDays, &student.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (s *StudentRepoImpl) GetStudents() ([]*domain.StudentModel, error) {
 	}
 	for rows.Next() {
 		var student domain.StudentModel
-		err = rows.Scan(&student.ID, &student.Email, &student.Password, &student.ProfilePic, &student.Name, &student.TelegramUsername, &student.HeadID, &student.TotalDuration, &student.TotalActiveDays)
+		err = rows.Scan(&student.ID, &student.Email, &student.Password, &student.ProfilePic, &student.Name, &student.TelegramUsername, &student.HeadID, &student.TotalDuration, &student.TotalActiveDays, &student.CreatedAt)
 		if err != nil {
 			return nil, err
 		}

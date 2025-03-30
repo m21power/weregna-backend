@@ -27,7 +27,7 @@ func (r *Router) RegisterRoute() {
 		log.Println("Cannot connect to db")
 		return
 	}
-
+	// Student endpoint
 	// Initialize repository, usecase, and handler
 	studentRepository := repository.NewStudentRepoImpl(db)
 	studentUsecase := usecases.NewStudentUsecases(studentRepository)
@@ -41,6 +41,21 @@ func (r *Router) RegisterRoute() {
 	studentRoutes.Handle("/student/update/{email}", http.HandlerFunc(studentHandler.UpdateStudent)).Methods("PUT")
 	studentRoutes.Handle("/student/delete/{id}", http.HandlerFunc(studentHandler.DeleteStudent)).Methods("DELETE")
 	studentRoutes.Handle("/students", http.HandlerFunc(studentHandler.GetStudents)).Methods("GET")
+
+	// Head endpoint
+	// Initialize repository, usecase, and handler
+	headRepository := repository.NewHeadRepoImpl(db)
+	headUsecase := usecases.NewHeadUsecases(headRepository)
+	headHandler := handlers.NewHeadHandler(headUsecase)
+	headRoutes := r.route.PathPrefix("/api/v1").Subrouter()
+	headRoutes.Handle("/head/create", http.HandlerFunc(headHandler.CreateHead)).Methods("POST")
+	headRoutes.Handle("/head/get-by-email/{email}", http.HandlerFunc(headHandler.GetHeadByEmail)).Methods("GET")
+	headRoutes.Handle("/head/get-by-id/{id:.}", http.HandlerFunc(headHandler.GetHeadByID)).Methods("GET")
+	headRoutes.Handle("/head/update/{email}", http.HandlerFunc(headHandler.UpdateHead)).Methods("PUT")
+	headRoutes.Handle("/head/delete/{id}", http.HandlerFunc(headHandler.DeleteHead)).Methods("DELETE")
+	headRoutes.Handle("/heads", http.HandlerFunc(headHandler.GetHeads)).Methods("GET")
+	headRoutes.Handle("/head/add-my-student/{headID}", http.HandlerFunc(headHandler.AddMyStudent)).Methods("POST")
+	headRoutes.Handle("/head/get-my-students/{headID}", http.HandlerFunc(headHandler.GetMyStudents)).Methods("GET")
 
 	log.Println("Routes registered:")
 }
